@@ -1,3 +1,7 @@
+# Learning React
+
+This is just a Playground for learning Reactjs from a course I found on Udemy
+
 ## Corresponding Projects
 
 #### useState
