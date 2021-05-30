@@ -1,10 +1,10 @@
 import React from 'react';
-import UseStateObject from './tutorial/1-useState/setup/4-useState-object';
+import UseEffectBasics from './tutorial/2-useEffect/setup/1-useEffect-basics';
 
 function App() {
   return (
     <div className='container'>
-      <UseStateObject />
+      <UseEffectBasics />
     </div>
   )
 }
