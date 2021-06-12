@@ -1,12 +1,12 @@
 import React from 'react';
-import UseEffectBasics from './tutorial/2-useEffect/setup/1-useEffect-basics';
+import ControlledInputs from './tutorial/4-forms/setup/2-multiple-inputs';
 
 function App() {
   return (
     <div className='container'>
-      <UseEffectBasics />
+      <ControlledInputs />
     </div>
   )
 }
 
-export default App
+export default App;
