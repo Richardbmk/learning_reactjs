@@ -7,7 +7,6 @@ const PersonContext = React.createContext();
 // two components - Provider, Consumer
 
 const ContextAPI = () => {
-
   const [people, setPeople] = useState(data);
 
   const removePerson = (id) => {
@@ -17,7 +16,7 @@ const ContextAPI = () => {
   };
 
   return (
-    <PersonContext.Provider value={{ removePerson, people }} >
+    <PersonContext.Provider value={{ removePerson, people }}>
       <h3>Context API / useContext</h3>
       <List />
     </PersonContext.Provider>
@@ -26,11 +25,11 @@ const ContextAPI = () => {
 
 const List = () => {
   const mainData = useContext(PersonContext);
-  console.log(mainData);
+  console.log('mainData', mainData);
   return (
     <>
       {mainData.people.map((person) => {
-        return <SinglePerson key={person.id} {...person} />
+        return <SinglePerson key={person.id} {...person} />;
       })}
     </>
   );
@@ -38,7 +37,7 @@ const List = () => {
 
 const SinglePerson = ({ id, name }) => {
   const { removePerson } = useContext(PersonContext);
-  
+
   return (
     <div className='item'>
       <h4>{name}</h4>

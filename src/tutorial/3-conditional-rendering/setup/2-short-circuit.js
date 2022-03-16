@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 // ternary operator
 
 const ShortCircuit = () => {
-  const [text, setText] = useState('');
+  const [text, setText] = useState(''); // Empty string is a falsy value
   const [isError, setIsError] = useState(false);
-  const firstValue = text || 'hello world';
-  const secondValue = text && 'hello world';
+  const firstValue = text || 'hello world'; // if is falsy then return
+  const secondValue = text && 'hello world'; // if is truthy then return
 
   return (
     <>
