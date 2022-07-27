@@ -10,11 +10,17 @@ import SingleProduct from './pages/SingleProduct';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './pages/ProtectedRoute';
+import Register from './components/auth/Register';
+import { withAuthenticator } from '@aws-amplify/ui-react';
 
-function App() {
+function App({ signOut }) {
   const [user, setUser] = useState(null);
+
   return (
     <BrowserRouter>
+      <div>
+        <button onClick={signOut}>Sign out</button>
+      </div>
       <Routes>
         <Route path='/' element={<SharedLayout />}>
           <Route index element={<Home />} />
@@ -37,4 +43,6 @@ function App() {
   );
 }
 
-export default App;
+export default withAuthenticator(App, {
+  socialProviders: ['apple'],
+});
