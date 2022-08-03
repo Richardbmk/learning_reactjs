@@ -1,16 +1,20 @@
 import React, { useState, useReducer } from 'react';
 import Modal from './Modal';
 import { data } from '../../../data';
+
 // reducer function
 import { reducer } from './reducer';
+
 const defaultState = {
   people: [],
   isModalOpen: false,
   modalContent: '',
 };
+
 const Index = () => {
   const [name, setName] = useState('');
   const [state, dispatch] = useReducer(reducer, defaultState);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (name) {
@@ -21,9 +25,11 @@ const Index = () => {
       dispatch({ type: 'NO_VALUE' });
     }
   };
+
   const closeModal = () => {
     dispatch({ type: 'CLOSE_MODAL' });
   };
+
   return (
     <>
       {state.isModalOpen && (

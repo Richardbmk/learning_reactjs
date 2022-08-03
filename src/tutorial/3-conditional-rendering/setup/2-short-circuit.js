@@ -5,8 +5,8 @@ import React, { useState } from 'react';
 const ShortCircuit = () => {
   const [text, setText] = useState(''); // Empty string is a falsy value
   const [isError, setIsError] = useState(false);
-  const firstValue = text || 'hello world'; // if is falsy then return
-  const secondValue = text && 'hello world'; // if is truthy then return
+  const firstValue = text || 'hello world'; // must be falsy to return the second value, if not return the first value
+  const secondValue = text && 'hello world'; // must be truthy to return the second value
 
   return (
     <>

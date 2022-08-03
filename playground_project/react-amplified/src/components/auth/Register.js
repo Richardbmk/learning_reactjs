@@ -1,154 +1,102 @@
-import React, { useState } from 'react';
-import FormErrors from '../FormErrors';
-import Validate from '../utility/FormValidation';
+/* Import the Amplify Auth API */
 import { Auth } from 'aws-amplify';
 
-const Register = () => {
-  const [state, setState] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmpassword: '',
-    errors: {
-      cognito: null,
-      blankfield: false,
-      passwordmatch: false,
-    },
-  });
-
-  const clearErrorState = () => {
-    this.setState({
-      errors: {
-        cognito: null,
-        blankfield: false,
-        passwordmatch: false,
-      },
-    });
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    // Form validation
-    clearErrorState();
-    const error = Validate(event, this.state);
-    if (error) {
-      this.setState({
-        errors: { ...this.state.errors, ...error },
-      });
-    }
-
-    // AWS Cognito integration here
-    const { username, email, password } = this.state;
-    try {
-      const signUpResponse = await Auth.signUp({
-        username,
-        password,
-        attributes: {
-          email: email,
-        },
-      });
-      this.props.history.push('/welcome');
-      console.log(signUpResponse);
-    } catch (error) {
-      let err = null;
-      !error.message ? (err = { message: error }) : (err = error);
-      this.setState({
-        errors: {
-          ...this.state.errors,
-          cognito: err,
-        },
-      });
-    }
-  };
-
-  const onInputChange = (event) => {
-    this.setState({
-      [event.target.id]: event.target.value,
-    });
-    document.getElementById(event.target.id).classList.remove('is-danger');
-  };
-
-  return (
-    <section className='section auth'>
-      <div className='container'>
-        <h1>Register</h1>
-        <FormErrors formerrors={this.state.errors} />
-
-        <form onSubmit={handleSubmit}>
-          <div className='field'>
-            <p className='control'>
-              <input
-                className='input'
-                type='text'
-                id='username'
-                aria-describedby='userNameHelp'
-                placeholder='Enter username'
-                value={this.state.username}
-                onChange={onInputChange}
-              />
-            </p>
-          </div>
-          <div className='field'>
-            <p className='control has-icons-left has-icons-right'>
-              <input
-                className='input'
-                type='email'
-                id='email'
-                aria-describedby='emailHelp'
-                placeholder='Enter email'
-                value={this.state.email}
-                onChange={onInputChange}
-              />
-              <span className='icon is-small is-left'>
-                <i className='fas fa-envelope'></i>
-              </span>
-            </p>
-          </div>
-          <div className='field'>
-            <p className='control has-icons-left'>
-              <input
-                className='input'
-                type='password'
-                id='password'
-                placeholder='Password'
-                value={this.state.password}
-                onChange={onInputChange}
-              />
-              <span className='icon is-small is-left'>
-                <i className='fas fa-lock'></i>
-              </span>
-            </p>
-          </div>
-          <div className='field'>
-            <p className='control has-icons-left'>
-              <input
-                className='input'
-                type='password'
-                id='confirmpassword'
-                placeholder='Confirm password'
-                value={this.state.confirmpassword}
-                onChange={onInputChange}
-              />
-              <span className='icon is-small is-left'>
-                <i className='fas fa-lock'></i>
-              </span>
-            </p>
-          </div>
-          <div className='field'>
-            <p className='control'>
-              <a href='/forgotpassword'>Forgot password?</a>
-            </p>
-          </div>
-          <div className='field'>
-            <p className='control'>
-              <button className='button is-success'>Register</button>
-            </p>
-          </div>
-        </form>
-      </div>
-    </section>
-  );
+/* Create the form state and form input state */
+let formState = 'signUp';
+let formInputState = {
+  username: '',
+  password: '',
+  email: '',
+  verificationCode: '',
 };
 
-export default Register;
+/* onChange handler for form inputs */
+function onChange(e) {
+  formInputState = { ...formInputState, [e.target.name]: e.target.value };
+}
+
+/* Sign up function */
+async function signUp() {
+  try {
+    await Auth.signUp({
+      username: formInputState.username,
+      password: formInputState.password,
+      attributes: {
+        email: formInputState.email,
+      },
+    });
+    /* Once the user successfully signs up, update form state to show the confirm sign up form for MFA */
+    formState = 'confirmSignUp';
+  } catch (err) {
+    console.log({ err });
+  }
+}
+
+/* Confirm sign up function for MFA */
+async function confirmSignUp() {
+  try {
+    await Auth.confirmSignUp(
+      formInputState.username,
+      formInputState.verificationCode
+    );
+    /* Once the user successfully confirms their account, update form state to show the sign in form*/
+    formState = 'signIn';
+  } catch (err) {
+    console.log({ err });
+  }
+}
+
+/* Sign in function */
+async function signIn() {
+  try {
+    await Auth.signIn(formInputState.username, formInputState.password);
+    /* Once the user successfully signs in, update the form state to show the signed in state */
+    formState = 'signedIn';
+  } catch (err) {
+    console.log({ err });
+  }
+}
+
+/* In the UI of the app, render forms based on form state */
+/* If the form state is "signUp", show the sign up form */
+if (formState === 'signUp') {
+  return (
+    <div>
+      <input name='username' onChange={onChange} />
+      <input name='password' type='password' onChange={onChange} />
+      <input name='email' onChange={onChange} />
+      <button onClick={signUp}>Sign Up</button>
+    </div>
+  );
+}
+
+/* If the form state is "confirmSignUp", show the confirm sign up form */
+if (formState === 'confirmSignUp') {
+  return (
+    <div>
+      <input name='username' onChange={onChange} />
+      <input name='verificationCode' onChange={onChange} />
+      <button onClick={confirmSignUp}>Confirm Sign Up</button>
+    </div>
+  );
+}
+
+/* If the form state is "signIn", show the sign in form */
+if (formState === 'signIn') {
+  return (
+    <div>
+      <input name='username' onChange={onChange} />
+      <input name='password' onChange={onChange} />
+      <button onClick={signIn}>Sign In</button>
+    </div>
+  );
+}
+
+/* If the form state is "signedIn", show the app */
+if (formState === 'signedIn') {
+  return (
+    <div>
+      <h1>Welcome to my app!</h1>
+    </div>
+  );
+}

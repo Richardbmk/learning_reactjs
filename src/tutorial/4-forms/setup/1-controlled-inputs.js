@@ -25,6 +25,7 @@ const ControlledInputs = () => {
       console.log('empty values');
     }
   };
+
   return (
     <>
       <article>
